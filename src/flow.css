@@ -785,8 +785,9 @@ button:disabled { opacity: 0.45; }
 mark.dm { background: transparent; color: inherit; border-radius: 3px; cursor: pointer; padding: 0.04em 0; transition: background 0.2s; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 mark.dm-highlight { background: color-mix(in srgb, var(--ink) 34%, transparent); }
 :root[data-theme="light"] mark.dm-highlight { background: color-mix(in srgb, var(--wash) 85%, transparent); }
-mark.dm-underline { text-decoration: underline 2px var(--ink); text-underline-offset: 0.22em; text-decoration-skip-ink: none; }
-mark.dm-comment { background: color-mix(in srgb, var(--ink) 15%, transparent); text-decoration: underline dotted 2px var(--ink); text-underline-offset: 0.22em; }
+/* Written as separate parts: Safari (iPhone, iPad) drops the one-line form with a thickness in it */
+mark.dm-underline { -webkit-text-decoration-line: underline; text-decoration-line: underline; -webkit-text-decoration-color: var(--ink); text-decoration-color: var(--ink); text-decoration-thickness: 2px; text-underline-offset: 0.22em; text-decoration-skip-ink: none; }
+mark.dm-comment { background: color-mix(in srgb, var(--ink) 15%, transparent); -webkit-text-decoration-line: underline; text-decoration-line: underline; -webkit-text-decoration-style: dotted; text-decoration-style: dotted; -webkit-text-decoration-color: var(--ink); text-decoration-color: var(--ink); text-decoration-thickness: 2px; text-underline-offset: 0.22em; }
 mark.dm:hover { filter: brightness(1.15); }
 mark.dm[data-pin]::after {
   content: attr(data-pin); display: inline-block; margin-left: 0.25em; padding: 0 0.42em; border-radius: 1em;

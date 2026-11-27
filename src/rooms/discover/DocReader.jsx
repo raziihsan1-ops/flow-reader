@@ -16,6 +16,7 @@ import { selectWords } from '../../lib/findText.js';
 import { lab } from '../../lib/space.js';
 import { isDefinable } from '../../lib/dictionary.js';
 import { touchUI, useTouchSelection } from '../../lib/touchSelect.js';
+import { enterFull, exitFull } from '../../lib/fullscreen.js';
 
 const narrow = () => window.innerWidth < 760;
 
@@ -340,7 +341,12 @@ export default function DocReader({ card, from, at, atSection, atText, quoted, o
     return () => window.removeEventListener('pointerdown', away, true);
   }, [openId, closePop]);
 
-  const toggleFocus = () => setFocus((f) => { if (!f) setFocusHint(true); return !f; });
+  const toggleFocus = () => setFocus((f) => {
+    document.activeElement?.blur?.(); // the bar stays open while its button holds the focus
+    if (!f) { setFocusHint(true); enterFull(); } else exitFull();
+    return !f;
+  });
+  useEffect(() => () => { exitFull(); }, []); // leaving the reader always comes out of full screen
   useEffect(() => {
     if (!focusHint) return undefined;
     const t = setTimeout(() => setFocusHint(false), 2200);
@@ -411,6 +417,7 @@ export default function DocReader({ card, from, at, atSection, atText, quoted, o
     >
       <div className="room-accent" style={{ background: 'var(--cyan)' }} />
       {focus && <div className="reader-reveal" aria-hidden="true" />}
+      {focus && <button type="button" className="focus-exit" aria-label="Leave full screen" onClick={toggleFocus}><svg viewBox="0 0 24 24" width="18" height="18"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg></button>}
       <header className="reader-top drag">
         <button type="button" className="btn" aria-label="Back to library" onClick={close}><BackIcon /><span className="back-label"> Library</span></button>
         <span className="reader-type">{card.source ? 'ARTICLE' : DOC_FORMATS[card.format] || 'DOC'}</span>
@@ -420,14 +427,14 @@ export default function DocReader({ card, from, at, atSection, atText, quoted, o
         <span className="doc-percent">{here.percent}%</span>
         {hasToc && (
           <button type="button" className={`btn marks-toggle${panel === 'toc' ? ' on' : ''}`} aria-pressed={panel === 'toc'} title="Contents (T)" onClick={() => togglePanel('toc')}>
-            Contents
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 6h2M9 6h11M4 12h2M9 12h11M4 18h2M9 18h11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg><span className="btn-label">Contents</span>
           </button>
         )}
         <button type="button" className={`btn marks-toggle${panel === 'marks' ? ' on' : ''}`} aria-pressed={panel === 'marks'} title="Marks (M)" onClick={() => togglePanel('marks')}>
-          <MarksIcon /> Marks{marks.length > 0 && <span className="marks-count">{marks.length}</span>}
+          <MarksIcon /><span className="btn-label">Marks</span>{marks.length > 0 && <span className="marks-count">{marks.length}</span>}
         </button>
         <AaMenu reading={reading} onReading={onReading} open={menu} onOpenChange={setMenu} />
-        <button type="button" className={`btn icon-only focus-btn${focus ? ' on' : ''}`} aria-pressed={focus} aria-label="Focus mode" title={focus ? 'Show the bar (F)' : 'Focus: hide this bar (F)'} onClick={toggleFocus}>
+        <button type="button" className={`btn icon-only focus-btn${focus ? ' on' : ''}`} aria-pressed={focus} aria-label="Full screen" title={focus ? 'Show the bar (F)' : 'Full screen: hide this bar (F)'} onClick={toggleFocus}>
           <FocusIcon />
         </button>
       </header>
@@ -514,7 +521,7 @@ export default function DocReader({ card, from, at, atSection, atText, quoted, o
             exit={{ opacity: 0, y: -8, x: '-50%' }}
             transition={quick}
           >
-            Focus mode · move to the top to see the bar · <span className="kbd">F</span> to bring it back
+            {touchUI() ? 'Full screen · tap the button in the top corner to come back' : <>Focus mode · move to the top to see the bar · <span className="kbd">F</span> to bring it back</>}
           </motion.div>
         )}
       </AnimatePresence>
