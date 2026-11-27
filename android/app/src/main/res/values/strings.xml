@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Flow Reader</string>
+    <string name="title_activity_main">Flow Reader</string>
+    <string name="package_name">com.razi.flowreader</string>
+    <string name="custom_url_scheme">com.razi.flowreader</string>
+</resources>

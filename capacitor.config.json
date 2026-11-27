@@ -1,0 +1,7 @@
+{
+  "appId": "com.razi.flowreader",
+  "appName": "Flow Reader",
+  "webDir": "dist",
+  "android": { "allowMixedContent": false, "backgroundColor": "#0B0D10" },
+  "plugins": { "StatusBar": { "style": "DARK", "backgroundColor": "#0B0D10", "overlaysWebView": false } }
+}
